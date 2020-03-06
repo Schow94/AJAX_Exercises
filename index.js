@@ -14,13 +14,15 @@ https: $(document).ready(function() {
   //Selectors
   var $searchBtn = $('.search-btn');
   var $inputVal = $('.form-val');
+  var $imagesContainer = $('.images-container');
+  var $removeBtn = $('.remove-btn');
 
   //Clear input - Helper fxn
   const clearInput = () => {
     $($inputVal).val('');
   };
 
-  //Event handler for submit button
+  //Event handler - submit button
   $searchBtn.on('click', e => {
     e.preventDefault();
     var query = $($inputVal).val();
@@ -31,10 +33,24 @@ https: $(document).ready(function() {
       `https://api.giphy.com/v1/gifs/search?q=${query}&api_key=${api_key}`
     )
       .then(res => {
-        data = res.data;
-        console.log(data);
+        var imageURL = res.data[0].images.downsized_medium.url;
+        // console.log(imageURL);
+        var image = $('<img>', {
+          src: imageURL,
+          alt: query,
+          class: 'image'
+        });
+
+        $imagesContainer.prepend(image);
+        console.log(imageURL);
       })
       .catch(err => console.log(err));
+  });
+
+  //Event Handler - Remove images
+  $removeBtn.on('click', e => {
+    e.preventDefault();
+    $($imagesContainer).empty();
   });
 
   //jQuery $.getJSON() - More concise
@@ -53,8 +69,7 @@ https: $(document).ready(function() {
   //   url: 'https:/api.giphy.com/v1/gifs/search',
   //   data: {
   //     q: 'hilarious',
-  //     rating: 'g',
-  //     api_key: 'iXlyf4Urp11j3yeecPUvcZUfjda3fAWi'
+  //     api_key: api_key
   //   },
   //   dataType: 'json'
   // })
